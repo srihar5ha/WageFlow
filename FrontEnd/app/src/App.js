@@ -4,9 +4,10 @@ import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 import abi from "./contracts/PayV1.json";
-
-
+import { ethers} from 'ethers';
  import { options, modalConfig,openloginAdapter,web3AuthModalPack} from "./components/Authkit.ts";
+import { Web3Auth } from '@web3auth/modal';
+
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
   const [address,setAddress]=useState(null);
   const [userInfo,setUserinfo]=useState(null);
   const [safes,setSafes]=useState('');
-
+  const[signer,setSigner]=useState(null);
 
 
   useEffect(() => {
@@ -26,7 +27,10 @@ function App() {
     initModal();
   }, []);
 
- 
+  // const ethProvider= new ethers.providers.Web3Provider(provider);
+  // const signer = await ethProvider.getSigner();
+  // const thisaddress =await  signer.getAddress();
+
 
   const handleSignIn = async () => {
     try {
@@ -37,12 +41,13 @@ function App() {
       const newProvider = await web3AuthModalPack.getProvider();
       const newAddress= await web3AuthModalPack.getAddress();
       const newUserinfo= await web3AuthModalPack.getUserInfo();
-      console.log("new provider is ",newProvider);
-      console.log("new address ",newAddress);
-      console.log("new Usr info ",newUserinfo);
+      const ethProvider= new ethers.providers.Web3Provider(newProvider);
+      const newSigner = await ethProvider.getSigner();
       setEoa(eoa);
-      setProvider(newProvider);
+      setProvider(ethProvider);
       setAddress(newAddress);
+      setSigner(newSigner);
+      
       setUserinfo(newUserinfo);
 
     } catch (error) {
@@ -62,7 +67,8 @@ function App() {
     }
   }
 
- 
+
+
 
   return (
     <>
@@ -73,16 +79,15 @@ function App() {
         <p>Click the button below to sign in with Web3Auth:</p>
 
         <button onClick={handleSignIn}>Sign In with Web3Auth</button>
-        {/* <p>
-          "Data "  {eoaValue ?  JSON.stringify(userInfo) : "no data"}
-        </p> */}
         {eoaValue !== null && (
-          <div className='card'>
+          <div >
             <p>eoa:  {eoaValue}</p>
             <p>Address: {address}</p>
+            {console.log("signer and provider ",signer,provider)}
           </div>
         )}
-        <button onClick={handleSignOut}>SIgn Out</button>
+        <button onClick={handleSignOut}>Sign Out</button>
+        {/* <button onClick={getpvtkey}>login As a Company</button> */}
         
       </header>
     </div>
