@@ -1,12 +1,18 @@
 import React from 'react';
 
-function CompanyDashboard() {
+function CompanyDashboard({eoa,userType,onLogout}) {
   // Company-specific dashboard content
 
   return (
     <div>
-      <h2>Company Dashboard</h2>
-      {/* Add components and logic for managing employees, updating salaries, and viewing transactions */}
+      <h2>company Dashboard</h2>
+      <p>EOA:{eoa}</p>
+      <p></p>
+      <p>userType:{userType}</p>
+
+     
+      {/* Display transaction history and employee-related information */}
+     
     </div>
   );
 }

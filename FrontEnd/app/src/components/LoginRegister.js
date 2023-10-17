@@ -1,45 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { web3AuthModalPack, options, openloginAdapter } from '../components/authkit.ts'; // Import from your authkit.ts
+import { options, modalConfig,openloginAdapter,web3AuthModalPack} from "./Authkit.ts";
+import { ethers} from 'ethers';
 
-function LoginRegister() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userRole, setUserRole] = useState(''); // Company or Employee
+
+function LoginRegister({ onUserLogin, onUserLogout}) {
+  // const [userType, setUserType] = useState(''); // Company or Employee
+  const [status,setStatus] = useState(false);
+  
+
+
 
   useEffect(() => {
-    async function initAuthModal() {
-      await web3AuthModalPack.init({ options, adapters: [openloginAdapter] });
+    async function initModal(){
+    
+    await web3AuthModalPack.init({options, adapters: [openloginAdapter], modalConfig })
     }
-    initAuthModal();
-  }, []); // Initialize the Web3Auth modal
+    initModal();
+  }, []);
 
-  const handleLogin = async () => {
+  
+
+
+
+  const handleLoginOrRegistration = async (userType) => {
     try {
-      const { eoa, safes } = await web3AuthModalPack.signIn();
-      // Handle the user's role and authentication logic here
+      
+        setStatus(true);
+        const { eoa, safes } = await web3AuthModalPack.signIn()
+        console.log('Successfully signed in with Web3Auth, eoa,safes = ',eoa,safes);
+              
+        const provider= new ethers.providers.Web3Provider(await web3AuthModalPack.getProvider())
+        const userData = {
+          eoa : eoa,
+          address:web3AuthModalPack.getAddress(),
+          userInfo: web3AuthModalPack.getUserInfo(),
+          provider: provider,          
+          signer: await provider.getSigner(),
+          userType: userType,
+          };
+        // Pass the user data to the parent component
+        onUserLogin(userData);
+        console.log("yes indeid 3 ",status);
+      
+      // updateState(eoa, ethProvider, newAddress, newSigner, newUserinfo);
+      
     } catch (error) {
       console.error('Error signing in with Web3Auth', error);
     }
-  };
+  }
 
-  const handleRegistration = async () => {
+
+
+  const handleLogout = async () => {
     // Handle user registration logic
+     await web3AuthModalPack.signOut();
+    setStatus(false);
+    onUserLogout();
   };
 
   return (
     <div>
-      <h2>Login or Register</h2>
-      <div>
-        <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <select value={userRole} onChange={(e) => setUserRole(e.target.value)}>
-          <option value="Company">Company</option>
-          <option value="Employee">Employee</option>
-        </select>
-        <button onClick={handleLogin}>Login with Web3Auth</button>
-        <button onClick={handleRegistration}>Register</button>
-      </div>
-    </div>
+    <p>Login or Register:</p>
+    <button onClick={() => handleLoginOrRegistration('company')}>Company</button>
+      <button onClick={() => handleLoginOrRegistration('employee')}>Employee</button>
+      {status && <button onClick={handleLogout}>mowa</button>}
+    
+  </div>
   );
 }
 
