@@ -1,15 +1,20 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext.js';
 
-function EmployeeDashboard({eoa,userType,onLogout}) {
+function EmployeeDashboard() {
   // Employee-specific dashboard content
+  const { eoa, name, userType, address, userInfo, handleSomething } = useAuth();
   
   return (
     <div>
       <h2>Employee Dashboard</h2>
+      <div>
+      
+     
       <p>EOA:{eoa}</p>
-      <p></p>
+      <p>address: {address}</p>
       <p>userType:{userType}</p>
-
+</div>
      
       {/* Display transaction history and employee-related information */}
       

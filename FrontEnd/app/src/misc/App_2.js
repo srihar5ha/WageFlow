@@ -1,9 +1,9 @@
 
 
 import React, { useState,useEffect } from 'react';
-import LoginRegister from './components/LoginRegister.js';
-import CompanyDashboard from './components/CompanyDashboard.js';
-import EmployeeDashboard from './components/EmployeeDashboard.js';
+import LoginRegister from '../components/LoginRegister.js';
+import CompanyDashboard from '../components/CompanyDashboard.js';
+import EmployeeDashboard from '../components/EmployeeDashboard.js';
 // import { web3AuthModalPack } from './components/Authkit.js';
 
 function App() {
@@ -30,6 +30,7 @@ function App() {
 
   const handleUserLogout = () => {
        setEoa(null);
+       console.log("inside onuserlogout")
   };
 
   useEffect(() => {
@@ -61,11 +62,11 @@ function App() {
             userType={userType}
           />
         )}
-       
+       <LoginRegister eoaflag={eoa} onUserLogout={handleUserLogout} onUserLogin={handleUserLogin} />
       </div>
     ) : (
       // User is not logged in, display the login/registration component
-      <LoginRegister onUserLogin={handleUserLogin} onUserLogout={handleUserLogout} />
+      <LoginRegister eoaflag={eoa} onUserLogin={handleUserLogin} onUserLogout={handleUserLogout} />
     )}
   </div>
   
@@ -73,3 +74,5 @@ function App() {
 }
 
 export default App;
+
+

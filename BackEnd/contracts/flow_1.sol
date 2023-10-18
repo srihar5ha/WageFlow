@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 contract  PayV1{
+    
     mapping(address=>string) public Name;
 
     struct salaryStruct{

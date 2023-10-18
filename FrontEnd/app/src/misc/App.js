@@ -1,11 +1,11 @@
 
 
-import logo from './logo.svg';
-import './App.css';
+import logo from '../logo.svg';
+import '../App.css';
 import { useEffect, useState } from 'react';
-import abi from "./contracts/PayV1.json";
+import abi from "../contracts/PayV1.json";
 import { ethers} from 'ethers';
- import { options, modalConfig,openloginAdapter,web3AuthModalPack} from "./components/Authkit.ts";
+ import { options, modalConfig,openloginAdapter,web3AuthModalPack} from "../components/Authkit.ts";
 
 
 function App() {
@@ -71,7 +71,8 @@ function App() {
     }
   }
   updateState();
-  }, [eoa]);
+  
+}, [eoa]);
 
 
 
