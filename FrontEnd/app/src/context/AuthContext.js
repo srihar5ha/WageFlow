@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { options,openloginAdapter,modalConfig,web3AuthModalPack } from '../components/Authkit.ts';
 import { ethers } from 'ethers';
+import abi from "../contracts/PayV1.json";
 
 const AuthContext = createContext();
 
@@ -11,9 +12,14 @@ export function AuthProvider({ children }) {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState(null);
-  const [name, setName] = useState('');
+ // const [name, setName] = useState('');
   const [isReg, setIsReg] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [contract,setContract]=useState(null);
+
+  const contractAddress="0x565eB9B0fE93D307eD5aC33DcD5cb81896498d18"; //mumbai testnet
+  
+  
 
   useEffect(() => {
     async function initModal() {
@@ -40,7 +46,7 @@ export function AuthProvider({ children }) {
       const newAddress= await web3AuthModalPack.getAddress();
       const newUserinfo= await web3AuthModalPack.getUserInfo();
       
-      setProvider(newProvider);
+      setProvider(ethProvider);
       setAddress( newAddress);
       setSigner( newSigner);
       setUserInfo(newUserinfo);
@@ -56,6 +62,19 @@ export function AuthProvider({ children }) {
   updateState();
 
   }, [eoa]);
+
+
+  //to create contract instance when signer and address are ready
+  useEffect(()=>{
+    if(signer && address){
+      const contract = new ethers.Contract(contractAddress, abi, signer)
+      console.log("contarct set mowa")
+      setContract(contract)
+    }
+
+
+
+  },[signer,address])
 
   // Define the handleLogin function here
   const handleLogin = async (selectedUserType) => {
@@ -88,6 +107,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const getEmployeeList = async () => {
+    try {
+      
+      let res = await contract.getEmployeeList(address)
+      return res
+    }
+    catch (e) {
+      console.log(e)
+      alert("Something went wrong inside get emp list, try again")
+    }
+  }
+  
+
+
+
+
+
   return (
     <AuthContext.Provider
       value={{
@@ -96,12 +132,16 @@ export function AuthProvider({ children }) {
         userInfo,
         provider,
         signer,
+        web3AuthModalPack,
         address,
         loading,
-        name,
+        abi,
+        contractAddress,        
         isReg,
         handleLogin,
         handleLogout,
+        contract,
+        getEmployeeList,
       }}
     >
       {children}

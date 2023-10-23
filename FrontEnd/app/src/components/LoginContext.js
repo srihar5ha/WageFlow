@@ -9,12 +9,9 @@ function LoginRegister() {
     eoa,
     userType,
     userInfo,
-    provider,
-    signer,
+   
     address,
     loading,
-    name,
-    isReg,
     handleLogin,
     handleLogout,
   } = useAuth();
@@ -29,7 +26,7 @@ function LoginRegister() {
     <div>
      
        { userType === 'company' ? (
-          <CompanyDashboard eoa={eoa} name={name} userType={userType} address={address} userInfo={userInfo} />
+          <CompanyDashboard  />
         ) : (
           <EmployeeDashboard />
         )
